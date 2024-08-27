@@ -1,0 +1,41 @@
+.faq-page {
+  font-family: Arial, sans-serif;
+  color: #333;
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.faq-page h1 {
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  color: #007bff;
+}
+
+.faq-container {
+  text-align: left;
+}
+
+.faq-item {
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 1rem;
+}
+
+.faq-question {
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.faq-question:hover {
+  color: #007bff;
+}
+
+.faq-answer {
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  color: #555;
+}

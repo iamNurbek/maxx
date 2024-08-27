@@ -1,0 +1,43 @@
+.social-media {
+  text-align: center;
+  padding: 1rem;
+  background-color: #f4f4f4;
+  margin-top: 2rem;
+  border-radius: 8px;
+}
+
+.social-media h2 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.social-media ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.social-media ul li {
+  margin: 0;
+}
+
+.social-media ul li a {
+  color: #555;
+  text-decoration: none;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: color 0.3s ease;
+}
+
+.social-media ul li a:hover {
+  color: #007bff;
+}
+
+.social-media ul li a i {
+  font-size: 1.5rem;
+}
