@@ -14,7 +14,7 @@ const Profile = () => {
     confirmNewPassword: '',
   });
 
-  const [loading, setLoading] = useState(false); // To handle loading state
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -73,7 +73,7 @@ const Profile = () => {
       return;
     }
 
-    setLoading(true); // Start loading
+    setLoading(true);
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -109,14 +109,12 @@ const Profile = () => {
       const data = await response.json();
       console.log('Profile updated successfully', data);
       alert('Profile updated successfully');
-      setLoading(false); // Stop loading
+      setLoading(false); 
 
-      // Optional: redirect to home or refresh profile
-      // navigate('/');
     } catch (error) {
       console.error('Error updating profile:', error);
       alert('Failed to update profile. Please try again.');
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 
