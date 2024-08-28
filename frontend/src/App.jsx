@@ -20,9 +20,9 @@ function App() {
           <Route path="/about" element={<AboutUs />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/data" element={<Data />} />
-          <Route path="/sign-up" element={<SignUp />} />
           <Route path="/sign-in" element={<SignIn />} />
-          <Route path="/profile" element={<Profile />} /> {/* Profile route */}
+          <Route path="/sign-up" element={<SignUp />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/faq" element={<FAQ />} />
         </Routes>
         <SocialMedia />

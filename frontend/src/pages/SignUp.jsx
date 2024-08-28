@@ -1,28 +1,64 @@
 // src/pages/SignUp.jsx
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/SignUp.css';
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
-    state: '',
     email: '',
+    state: '',
     password: '',
     confirmPassword: '',
   });
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       alert('Passwords do not match!');
       return;
     }
-    console.log('Sign Up Form Submitted', formData);
+
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/sign-up', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          state: formData.state,
+          password: formData.password,
+          confirmPassword: formData.confirmPassword,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Backend error:', errorData);
+        throw new Error('Failed to sign up');
+      }
+
+      const data = await response.json();
+      console.log('Sign Up Successful', data);
+
+      localStorage.setItem('token', data.token);
+
+      alert('Sign Up Successful');
+      navigate('/sign-in');
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Sign up failed. Please try again.');
+    }
   };
 
   return (
@@ -52,23 +88,23 @@ const SignUp = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="state">State</label>
-          <input
-            type="text"
-            id="state"
-            name="state"
-            value={formData.state}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
           <label htmlFor="email">Email Address</label>
           <input
             type="email"
             id="email"
             name="email"
             value={formData.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="state">State</label>
+          <input
+            type="text"
+            id="state"
+            name="state"
+            value={formData.state}
             onChange={handleChange}
             required
           />

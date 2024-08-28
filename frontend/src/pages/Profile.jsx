@@ -1,28 +1,123 @@
-import { useState } from 'react';
+// src/pages/Profile.jsx
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/Profile.css';
 
 const Profile = () => {
-  const [profileData, setProfileData] = useState({
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'johndoe@example.com',
-    state: 'California',
-    password: '',
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    state: '',
+    currentPassword: '',
     newPassword: '',
     confirmNewPassword: '',
   });
 
+  const [loading, setLoading] = useState(false); // To handle loading state
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          alert('No token found, please log in again');
+          navigate('/sign-in');
+          return;
+        }
+
+        const response = await fetch('http://localhost:5000/api/auth/profile', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch profile data');
+        }
+
+        const data = await response.json();
+        setFormData({
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          state: data.state,
+          currentPassword: '',
+          newPassword: '',
+          confirmNewPassword: '',
+        });
+      } catch (error) {
+        console.error('Error fetching profile data:', error);
+        alert('Failed to load profile data. Please try again.');
+      }
+    };
+
+    fetchProfileData();
+  }, [navigate]);
+
   const handleChange = (e) => {
-    setProfileData({ ...profileData, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (profileData.newPassword !== profileData.confirmNewPassword) {
+
+    if (
+      formData.newPassword &&
+      formData.newPassword !== formData.confirmNewPassword
+    ) {
       alert('New passwords do not match!');
       return;
     }
-    console.log('Profile Updated', profileData);
+
+    setLoading(true); // Start loading
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('No token found, please log in again');
+        navigate('/sign-in');
+        return;
+      }
+
+      const response = await fetch(
+        'http://localhost:5000/api/auth/update-profile',
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            state: formData.state,
+            currentPassword: formData.currentPassword,
+            newPassword: formData.newPassword || undefined,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Backend error:', errorData);
+        throw new Error('Failed to update profile');
+      }
+
+      const data = await response.json();
+      console.log('Profile updated successfully', data);
+      alert('Profile updated successfully');
+      setLoading(false); // Stop loading
+
+      // Optional: redirect to home or refresh profile
+      // navigate('/');
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      alert('Failed to update profile. Please try again.');
+      setLoading(false); // Stop loading
+    }
   };
 
   return (
@@ -35,7 +130,7 @@ const Profile = () => {
             type="text"
             id="firstName"
             name="firstName"
-            value={profileData.firstName}
+            value={formData.firstName}
             onChange={handleChange}
             required
           />
@@ -46,7 +141,7 @@ const Profile = () => {
             type="text"
             id="lastName"
             name="lastName"
-            value={profileData.lastName}
+            value={formData.lastName}
             onChange={handleChange}
             required
           />
@@ -57,9 +152,9 @@ const Profile = () => {
             type="email"
             id="email"
             name="email"
-            value={profileData.email}
+            value={formData.email}
             onChange={handleChange}
-            required
+            disabled
           />
         </div>
         <div className="form-group">
@@ -68,17 +163,18 @@ const Profile = () => {
             type="text"
             id="state"
             name="state"
-            value={profileData.state}
+            value={formData.state}
             onChange={handleChange}
+            required
           />
         </div>
         <div className="form-group">
-          <label htmlFor="password">Current Password</label>
+          <label htmlFor="currentPassword">Current Password</label>
           <input
             type="password"
-            id="password"
-            name="password"
-            value={profileData.password}
+            id="currentPassword"
+            name="currentPassword"
+            value={formData.currentPassword}
             onChange={handleChange}
             required
           />
@@ -89,7 +185,7 @@ const Profile = () => {
             type="password"
             id="newPassword"
             name="newPassword"
-            value={profileData.newPassword}
+            value={formData.newPassword}
             onChange={handleChange}
           />
         </div>
@@ -99,11 +195,13 @@ const Profile = () => {
             type="password"
             id="confirmNewPassword"
             name="confirmNewPassword"
-            value={profileData.confirmNewPassword}
+            value={formData.confirmNewPassword}
             onChange={handleChange}
           />
         </div>
-        <button type="submit">Update Profile</button>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Updating...' : 'Update Profile'}
+        </button>
       </form>
     </div>
   );
