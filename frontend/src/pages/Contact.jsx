@@ -4,7 +4,7 @@ import '../styles/Contact.css';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
-    name: '',
+    subject: '',
     email: '',
     message: '',
   });
@@ -13,9 +13,28 @@ const Contact = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Contact Form Submitted', formData);
+    try {
+      const response = await fetch('http://localhost:5000/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send message');
+      }
+
+      const result = await response.json();
+      alert(result.message);
+      setFormData({ subject: '', email: '', message: '' });
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error sending message. Please try again.');
+    }
   };
 
   return (
@@ -27,12 +46,12 @@ const Contact = () => {
       </p>
       <form className="contact-form" onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="name">Name</label>
+          <label htmlFor="subject">Subject</label>
           <input
             type="text"
-            id="name"
-            name="name"
-            value={formData.name}
+            id="subject"
+            name="subject"
+            value={formData.subject}
             onChange={handleChange}
             required
           />

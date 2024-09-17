@@ -5,7 +5,6 @@ const authMiddleware = require('../middlewares/authMiddleware');
 
 const router = express.Router();
 
-// Sign-up route
 router.post(
   '/sign-up',
   [
@@ -31,6 +30,7 @@ router.post(
 );
 
 router.get('/profile', authMiddleware, authController.getProfile);
+router.delete('/delete-account', authMiddleware, authController.deleteAccount);
 
 router.put(
   '/update-profile',

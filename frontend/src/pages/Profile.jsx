@@ -1,7 +1,59 @@
-// src/pages/Profile.jsx
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Profile.css';
+
+const states = [
+  'Alabama',
+  'Alaska',
+  'Arizona',
+  'Arkansas',
+  'California',
+  'Colorado',
+  'Connecticut',
+  'Delaware',
+  'Florida',
+  'Georgia',
+  'Hawaii',
+  'Idaho',
+  'Illinois',
+  'Indiana',
+  'Iowa',
+  'Kansas',
+  'Kentucky',
+  'Louisiana',
+  'Maine',
+  'Maryland',
+  'Massachusetts',
+  'Michigan',
+  'Minnesota',
+  'Mississippi',
+  'Missouri',
+  'Montana',
+  'Nebraska',
+  'Nevada',
+  'New Hampshire',
+  'New Jersey',
+  'New Mexico',
+  'New York',
+  'North Carolina',
+  'North Dakota',
+  'Ohio',
+  'Oklahoma',
+  'Oregon',
+  'Pennsylvania',
+  'Rhode Island',
+  'South Carolina',
+  'South Dakota',
+  'Tennessee',
+  'Texas',
+  'Utah',
+  'Vermont',
+  'Virginia',
+  'Washington',
+  'West Virginia',
+  'Wisconsin',
+  'Wyoming',
+];
 
 const Profile = () => {
   const [formData, setFormData] = useState({
@@ -109,12 +161,46 @@ const Profile = () => {
       const data = await response.json();
       console.log('Profile updated successfully', data);
       alert('Profile updated successfully');
-      setLoading(false); 
-
+      setLoading(false);
     } catch (error) {
       console.error('Error updating profile:', error);
       alert('Failed to update profile. Please try again.');
       setLoading(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    const confirmDelete = window.confirm(
+      'Are you sure you want to delete your account? This action cannot be undone.'
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(
+        'http://localhost:5000/api/auth/delete-account',
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Backend error:', errorData);
+        throw new Error('Failed to delete account');
+      }
+
+      localStorage.removeItem('token');
+      alert('Account deleted successfully');
+      navigate('/sign-up');
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      alert('Failed to delete account. Please try again.');
     }
   };
 
@@ -151,20 +237,25 @@ const Profile = () => {
             id="email"
             name="email"
             value={formData.email}
-            onChange={handleChange}
             disabled
           />
         </div>
         <div className="form-group">
           <label htmlFor="state">State</label>
-          <input
-            type="text"
+          <select
             id="state"
             name="state"
             value={formData.state}
             onChange={handleChange}
             required
-          />
+          >
+            <option value="">Select your state</option>
+            {states.map((state) => (
+              <option key={state} value={state}>
+                {state}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="form-group">
           <label htmlFor="currentPassword">Current Password</label>
@@ -201,6 +292,10 @@ const Profile = () => {
           {loading ? 'Updating...' : 'Update Profile'}
         </button>
       </form>
+
+      <button className="delete-account-button" onClick={handleDeleteAccount}>
+        Delete Account
+      </button>
     </div>
   );
 };

@@ -29,6 +29,9 @@ sequelize
 const authRoutes = require('./routes/authRoutes');
 app.use('/api/auth', authRoutes);
 
+const contactRoutes = require('./routes/contactRoutes');
+app.use('/contact', contactRoutes);
+
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send('Something broke!');

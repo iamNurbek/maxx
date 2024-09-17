@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { validationResult } = require('express-validator');
 
+
 exports.signUp = async (req, res) => {
   const { firstName, lastName, email, state, password, confirmPassword } =
     req.body;
@@ -49,6 +50,24 @@ exports.signUp = async (req, res) => {
     });
   } catch (err) {
     console.error('Error during sign-up:', err.message);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.deleteAccount = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    await user.destroy();
+
+    res.json({ message: 'Account deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting account:', error.message);
     res.status(500).json({ message: 'Server error' });
   }
 };

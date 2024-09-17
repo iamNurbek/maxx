@@ -3,6 +3,59 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/SignUp.css';
 
+const states = [
+  'Alabama',
+  'Alaska',
+  'Arizona',
+  'Arkansas',
+  'California',
+  'Colorado',
+  'Connecticut',
+  'Delaware',
+  'Florida',
+  'Georgia',
+  'Hawaii',
+  'Idaho',
+  'Illinois',
+  'Indiana',
+  'Iowa',
+  'Kansas',
+  'Kentucky',
+  'Louisiana',
+  'Maine',
+  'Maryland',
+  'Massachusetts',
+  'Michigan',
+  'Minnesota',
+  'Mississippi',
+  'Missouri',
+  'Montana',
+  'Nebraska',
+  'Nevada',
+  'New Hampshire',
+  'New Jersey',
+  'New Mexico',
+  'New York',
+  'North Carolina',
+  'North Dakota',
+  'Ohio',
+  'Oklahoma',
+  'Oregon',
+  'Pennsylvania',
+  'Rhode Island',
+  'South Carolina',
+  'South Dakota',
+  'Tennessee',
+  'Texas',
+  'Utah',
+  'Vermont',
+  'Virginia',
+  'Washington',
+  'West Virginia',
+  'Wisconsin',
+  'Wyoming',
+];
+
 const SignUp = () => {
   const [formData, setFormData] = useState({
     firstName: '',
@@ -100,14 +153,20 @@ const SignUp = () => {
         </div>
         <div className="form-group">
           <label htmlFor="state">State</label>
-          <input
-            type="text"
+          <select
             id="state"
             name="state"
             value={formData.state}
             onChange={handleChange}
             required
-          />
+          >
+            <option value="">Select your state</option>
+            {states.map((state) => (
+              <option key={state} value={state}>
+                {state}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="form-group">
           <label htmlFor="password">Password</label>
