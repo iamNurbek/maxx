@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/FAQ.css';
 
 const FAQ = () => {
   const [activeIndex, setActiveIndex] = useState(null);
+  const navigate = useNavigate();
 
   const toggleFAQ = (index) => {
     setActiveIndex(activeIndex === index ? null : index);
@@ -77,7 +79,7 @@ const FAQ = () => {
     {
       question: 'What is the refund policy?',
       answer:
-        'We offer a 30-day money-back guarantee for all premium subscriptions. If you’re not satisfied, contact us for a full refund.',
+        'We offer a 30-day money-back guarantee for all premium subscriptions. If you are not satisfied, contact us for a full refund.',
     },
     {
       question: 'Can I share my data with others?',
@@ -85,6 +87,10 @@ const FAQ = () => {
         "Yes, you can share your solar energy data with other users by providing them with access through the platform's sharing options.",
     },
   ];
+
+  const handleQuestionClick = () => {
+    navigate('/contact');
+  };
 
   return (
     <div className="faq-page">
@@ -101,9 +107,11 @@ const FAQ = () => {
           </div>
         ))}
       </div>
+      <div className="faq-question-button">
+        <button onClick={handleQuestionClick}>I have a question</button>
+      </div>
     </div>
   );
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
 export default FAQ;
