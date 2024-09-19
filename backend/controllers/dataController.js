@@ -1,21 +1,28 @@
-// controllers/dataController.js
-const Data = require('../models/Data');
+const fs = require('fs');
+const csv = require('csv-parser');
+const moment = require('moment');
 
-exports.getData = async (req, res) => {
-  try {
-    const data = await Data.getAllData();
-    res.json(data);
-  } catch (err) {
-    res.status(500).send('Error retrieving data');
-  }
+const readCSVData = (req, res) => {
+  const results = [];
+  const selectedMonth = parseInt(req.query.month);
+
+  fs.createReadStream('../data/data.csv')
+    .pipe(csv())
+    .on('data', (data) => {
+      const dataDate = moment(data.DATE_TIME, 'M/D/YYYY h:mm:ss A');
+      if (!selectedMonth || dataDate.month() + 1 === selectedMonth) {
+        results.push(data);
+      }
+    })
+    .on('end', () => {
+      res.json(results);
+    })
+    .on('error', (err) => {
+      console.error('Error reading CSV file:', err);
+      res.status(500).json({ error: 'Failed to read CSV file' });
+    });
 };
 
-exports.createData = async (req, res) => {
-  const { dataField } = req.body;
-  try {
-    await Data.insertData(dataField);
-    res.status(201).send('Data inserted successfully');
-  } catch (err) {
-    res.status(500).send('Error inserting data');
-  }
+module.exports = {
+  readCSVData,
 };

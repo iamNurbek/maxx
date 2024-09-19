@@ -1,10 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 const sequelize = require('./config/db');
-const User = require('./models/User');
 require('dotenv').config();
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 
 app.use(
   cors({
@@ -12,18 +12,19 @@ app.use(
     credentials: true,
   })
 );
-
 app.use(express.json());
+app.use(express.static('public'));
 
 app.get('/', (req, res) => {
   res.send('Backend is running');
 });
 
+const dataRoutes = require('./routes/dataRoutes');
+app.use('/api', dataRoutes);
+
 sequelize
   .sync({ force: false })
-  .then(() => {
-    console.log('Database & tables created!');
-  })
+  .then(() => console.log('Database & tables created!'))
   .catch((err) => console.error('Error creating tables:', err));
 
 const authRoutes = require('./routes/authRoutes');
@@ -37,7 +38,6 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something broke!');
 });
 
-const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

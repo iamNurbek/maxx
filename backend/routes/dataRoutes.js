@@ -1,11 +1,7 @@
-// routes/dataRoutes.js
 const express = require('express');
-const { getData, createData } = require('../controllers/dataController');
-const authMiddleware = require('../middlewares/authMiddleware');
-
 const router = express.Router();
+const dataController = require('../controllers/dataController');
 
-router.get('/', authMiddleware, getData);
-router.post('/', authMiddleware, createData);
+router.get('/solar-data', dataController.readCSVData);
 
 module.exports = router;
